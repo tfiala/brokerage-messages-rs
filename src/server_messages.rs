@@ -1,7 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
-
 pub struct ServerMessage<'a, T> {
     pub proto: &'a str,
     pub data: T,
@@ -74,32 +73,47 @@ pub fn make_subscribe_accounts_message<'a>()
     ))
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-pub struct SubscribeAccountLedgerPayload {
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub struct SubscribeAccountLedgerDetails {
     #[serde(rename = "account-id")]
     pub account_id: String,
+    #[serde(rename = "brokerage-id")]
+    pub brokerage_id: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+pub fn make_subscribe_account_ledger_message<'a>(
+    account_id: String,
+    brokerage_id: String,
+) -> ServerMessage<'a, ServerSubscription<'a, SubscribeAccountLedgerDetails>> {
+    ServerMessage::new_subscription(ServerSubscription::new(
+        "account-ledger",
+        SubscribeAccountLedgerDetails {
+            account_id,
+            brokerage_id,
+        },
+    ))
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct SubscribeAccountsPayload {}
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct SubscribePositionsPayload {
     #[serde(rename = "account-id")]
     pub account_id: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct SubscribeTradesPayload {
     #[serde(rename = "account-id")]
     pub account_id: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(tag = "id", content = "details")]
 pub enum Subscription {
     #[serde(rename = "account-ledger")]
-    AccountLedger(SubscribeAccountLedgerPayload),
+    AccountLedger(SubscribeAccountLedgerDetails),
 
     #[serde(rename = "accounts")]
     Accounts(SubscribeAccountsPayload),
@@ -146,6 +160,8 @@ pub enum ServerRequestDetails {
 pub enum ServerSubscriptionDetails {
     #[serde(rename = "accounts")]
     Accounts(SubscribeAccountsDetails),
+    #[serde(rename = "account-ledger")]
+    AccountLedger(SubscribeAccountLedgerDetails),
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]

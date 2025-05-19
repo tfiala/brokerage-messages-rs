@@ -36,15 +36,38 @@ fn test_enum_accounts_sub_update_parsing(accounts: Vec<BrokerageAccount>) {
 }
 
 #[rstest]
-fn test_explicit_select_account_request_parsing(
-    select_account_request: ServerMessage<ServerRequest<SelectAccountDetails>>,
+fn test_specific_subscribe_account_ledger_parsing(
+    subscribe_account_ledger_message: ServerMessage<
+        ServerSubscription<SubscribeAccountLedgerDetails>,
+    >,
 ) {
-    let serialized = serde_json::to_string(&select_account_request).unwrap();
-    let deserialized =
-        serde_json::from_str::<ServerMessage<ServerRequest<SelectAccountDetails>>>(&serialized)
-            .unwrap();
+    let serialized = serde_json::to_string(&subscribe_account_ledger_message).unwrap();
+    let deserialized = serde_json::from_str::<
+        ServerMessage<ServerSubscription<SubscribeAccountLedgerDetails>>,
+    >(&serialized)
+    .unwrap();
 
-    assert_eq!(select_account_request, deserialized);
+    assert_eq!(subscribe_account_ledger_message, deserialized);
+}
+
+#[rstest]
+fn test_enum_subscribe_account_ledger_parsing(
+    subscribe_account_ledger_message: ServerMessage<
+        ServerSubscription<SubscribeAccountLedgerDetails>,
+    >,
+) {
+    let serialized = serde_json::to_string(&subscribe_account_ledger_message).unwrap();
+    let deserialized = serde_json::from_str::<ServerMessageEnum>(&serialized).unwrap();
+
+    assert_eq!(
+        deserialized,
+        ServerMessageEnum::Subscription(ServerSubscriptionDetails::AccountLedger(
+            SubscribeAccountLedgerDetails {
+                account_id: subscribe_account_ledger_message.data.details.account_id,
+                brokerage_id: subscribe_account_ledger_message.data.details.brokerage_id,
+            }
+        ))
+    );
 }
 
 #[rstest]
