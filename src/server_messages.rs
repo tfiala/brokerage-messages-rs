@@ -3,8 +3,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 
 pub struct ServerMessage<'a, T> {
-    proto: &'a str,
-    data: T,
+    pub proto: &'a str,
+    pub data: T,
 }
 
 impl<'a, T> ServerMessage<'a, T> {
@@ -37,9 +37,9 @@ impl<'a, T> ServerMessage<'a, T> {
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 
 pub struct ServerRequest<'a, T> {
-    request_id: String,
-    id: &'a str,
-    details: T,
+    pub request_id: String,
+    pub id: &'a str,
+    pub details: T,
 }
 
 impl<'a, T> ServerRequest<'a, T> {
@@ -110,6 +110,13 @@ pub fn make_select_account_request<'a>(
             brokerage_id,
         },
     ))
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+#[serde(tag = "id", content = "details")]
+pub enum ServerRequestDetails {
+    #[serde(rename = "select-account")]
+    SelectAccount(SelectAccountDetails),
 }
 
 // #[derive(Debug, Deserialize, Serialize)]

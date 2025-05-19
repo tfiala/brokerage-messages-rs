@@ -29,3 +29,20 @@ fn test_explicit_select_account_request_parsing(
 
     assert_eq!(select_account_request, deserialized);
 }
+
+#[rstest]
+fn test_request_enum_select_account_request_parsing(
+    select_account_request: ServerMessage<ServerRequest<SelectAccountDetails>>,
+) {
+    let serialized = serde_json::to_string(&select_account_request).unwrap();
+    let deserialized =
+        serde_json::from_str::<ServerMessage<ServerRequestDetails>>(&serialized).unwrap();
+
+    assert_eq!(
+        deserialized.data,
+        ServerRequestDetails::SelectAccount(SelectAccountDetails {
+            account_id: select_account_request.data.details.account_id,
+            brokerage_id: select_account_request.data.details.brokerage_id
+        })
+    );
+}
