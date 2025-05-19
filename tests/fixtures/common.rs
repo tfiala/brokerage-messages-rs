@@ -9,6 +9,12 @@ pub const BROKERAGE_ID_2: &str = "IBKR";
 
 pub const REQUEST_ID: &str = "request-123";
 
+pub const ACCOUNT_TYPE: &str = "BROKERAGE-MARGIN";
+pub const AVAILABLE_FUNDS: f64 = 100000.0;
+pub const EQUITY_WITH_LOAN_VALUE: f64 = 200000.0;
+pub const GROSS_POSITION_VALUE: f64 = 300000.0;
+pub const CASH_BALANCE: f64 = 40000.0;
+
 #[fixture]
 pub fn accounts() -> Vec<BrokerageAccount> {
     vec![

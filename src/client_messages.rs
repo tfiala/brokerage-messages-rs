@@ -85,7 +85,7 @@ pub fn make_select_account_response<'a>(
 }
 
 //
-// Account Subscription Update
+// Accounts Subscription Update
 //
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
@@ -99,6 +99,24 @@ pub fn make_accounts_subscription_update<'a>(
     ClientMessage::new_subscription_update(ClientSubscriptionUpdate::new(
         "accounts",
         AccountsSubUpdateDetails { accounts },
+    ))
+}
+
+//
+// Account Ledger Subscription Update
+//
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub struct AccountLedgerSubUpdateDetails {
+    pub account_ledger: AccountLedger,
+}
+
+pub fn make_account_ledger_update<'a>(
+    account_ledger: AccountLedger,
+) -> ClientMessage<'a, ClientSubscriptionUpdate<'a, AccountLedgerSubUpdateDetails>> {
+    ClientMessage::new_subscription_update(ClientSubscriptionUpdate::new(
+        "account-ledger",
+        AccountLedgerSubUpdateDetails { account_ledger },
     ))
 }
 
@@ -127,6 +145,12 @@ pub struct EnumResponse {
 pub enum EnumSubDetails {
     #[serde(rename = "accounts")]
     Accounts(AccountsSubUpdateDetails),
+    #[serde(rename = "accounts-end")]
+    AccountsEnd,
+    #[serde(rename = "account-ledger")]
+    AccountLedger(AccountLedgerSubUpdateDetails),
+    #[serde(rename = "account-ledger-end")]
+    AccountLedgerEnd,
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]

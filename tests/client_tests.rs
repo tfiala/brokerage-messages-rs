@@ -55,7 +55,7 @@ fn test_enum_select_account_response_parsing(
 }
 
 //
-// Account Subscription Updates
+// Accounts Subscription Update
 //
 
 #[rstest]
@@ -73,9 +73,7 @@ fn test_explicit_accounts_sub_update_parsing(accounts: Vec<BrokerageAccount>) {
 #[rstest]
 fn test_enum_accounts_sub_update_parsing(accounts: Vec<BrokerageAccount>) {
     let message = make_accounts_subscription_update(accounts.clone());
-
     let serialized = serde_json::to_string(&message).unwrap();
-    println!("serialized: {}", serialized);
 
     let deserialized = serde_json::from_str::<EnumMessage>(&serialized).unwrap();
 
@@ -84,5 +82,39 @@ fn test_enum_accounts_sub_update_parsing(accounts: Vec<BrokerageAccount>) {
         EnumMessage::Subscription(EnumSubDetails::Accounts(AccountsSubUpdateDetails {
             accounts
         }))
+    );
+}
+
+//
+// Account Ledger Subscription Update
+//
+
+#[rstest]
+fn test_explicit_account_ledger_sub_update_parsing(
+    account_ledger_update: ClientMessage<ClientSubscriptionUpdate<AccountLedgerSubUpdateDetails>>,
+) {
+    let serialized = serde_json::to_string(&account_ledger_update).unwrap();
+    let deserialized = serde_json::from_str::<
+        ClientMessage<ClientSubscriptionUpdate<AccountLedgerSubUpdateDetails>>,
+    >(&serialized)
+    .unwrap();
+
+    assert_eq!(account_ledger_update, deserialized);
+}
+
+#[rstest]
+fn test_enum_account_ledger_update_parsing(
+    account_ledger_update: ClientMessage<ClientSubscriptionUpdate<AccountLedgerSubUpdateDetails>>,
+) {
+    let serialized = serde_json::to_string(&account_ledger_update).unwrap();
+    let deserialized = serde_json::from_str::<EnumMessage>(&serialized).unwrap();
+
+    assert_eq!(
+        deserialized,
+        EnumMessage::Subscription(EnumSubDetails::AccountLedger(
+            AccountLedgerSubUpdateDetails {
+                account_ledger: account_ledger_update.data.details.account_ledger
+            }
+        ))
     );
 }
