@@ -33,3 +33,9 @@ pub fn select_account_message<'a>() -> ServerMessage<'a, ServerRequest<'a, Selec
 
     make_select_account_request::<'a>(request_id, account_id, brokerage_id)
 }
+
+#[fixture]
+pub fn subscribe_accounts_message<'a>()
+-> ServerMessage<'a, ServerSubscription<'a, SubscribeAccountsDetails>> {
+    make_subscribe_accounts_message::<'a>()
+}

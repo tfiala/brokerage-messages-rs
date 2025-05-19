@@ -35,7 +35,6 @@ impl<'a, T> ServerMessage<'a, T> {
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
-
 pub struct ServerRequest<'a, T> {
     pub request_id: String,
     pub id: &'a str,
@@ -50,6 +49,29 @@ impl<'a, T> ServerRequest<'a, T> {
             details,
         }
     }
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub struct ServerSubscription<'a, T> {
+    pub id: &'a str,
+    pub details: T,
+}
+
+impl<'a, T> ServerSubscription<'a, T> {
+    pub fn new(id: &'a str, details: T) -> Self {
+        Self { id, details }
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub struct SubscribeAccountsDetails {}
+
+pub fn make_subscribe_accounts_message<'a>()
+-> ServerMessage<'a, ServerSubscription<'a, SubscribeAccountsDetails>> {
+    ServerMessage::new_request(ServerSubscription::new(
+        "accounts",
+        SubscribeAccountsDetails {},
+    ))
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -129,21 +151,3 @@ pub enum ServerMessageEnum {
     #[serde(rename = "subscription")]
     Subscription,
 }
-
-// #[derive(Debug, Deserialize, Serialize)]
-// #[serde(tag = "id", content = "details")]
-// pub enum ClientRequest {
-//     #[serde(rename = "select-account")]
-//     SelectAccount(SelectAccountPayload),
-// }
-
-// #[derive(Debug, Deserialize, Serialize)]
-// #[serde(tag = "proto", content = "data")]
-// pub enum ClientBrokerageProtocol {
-//     #[serde(rename = "push")]
-//     Push,
-//     #[serde(rename = "request")]
-//     Request(ClientRequest),
-//     #[serde(rename = "subscription")]
-//     Subscription(Subscription),
-// }
