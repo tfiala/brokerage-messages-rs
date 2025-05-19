@@ -58,6 +58,10 @@ impl<'a, T> ClientSubscriptionUpdate<'a, T> {
     }
 }
 
+//
+// Select Account Response
+//
+
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct SelectAccountResponseDetails {
     status: bool,
@@ -84,6 +88,10 @@ pub fn make_select_account_response<'a>(
     ))
 }
 
+//
+// Account Subscription Update
+//
+
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct AccountsSubscriptionUpdateDetails {
     pub accounts: Vec<BrokerageAccount>,
@@ -97,6 +105,10 @@ pub fn make_accounts_subscription_update<'a>(
         AccountsSubscriptionUpdateDetails { accounts },
     ))
 }
+
+//
+// Client Message Enum
+//
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(tag = "id", content = "details")]
