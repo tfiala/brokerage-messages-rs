@@ -52,7 +52,6 @@ fn test_message_enum_select_account_request_parsing(
     select_account_request: ServerMessage<ServerRequest<SelectAccountDetails>>,
 ) {
     let serialized = serde_json::to_string(&select_account_request).unwrap();
-    println!("Serialized: {}", serialized);
     let deserialized = serde_json::from_str::<ServerMessageEnum>(&serialized).unwrap();
 
     assert_eq!(
@@ -75,4 +74,20 @@ fn test_explicit_subscribe_accounts_message_parsing(
     .unwrap();
 
     assert_eq!(subscribe_accounts_message, deserialized);
+}
+
+#[rstest]
+fn test_message_enum_subscribe_accounts_parsing(
+    subscribe_accounts_message: ServerMessage<ServerSubscription<SubscribeAccountsDetails>>,
+) {
+    let serialized = serde_json::to_string(&subscribe_accounts_message).unwrap();
+    println!("Serialized: {}", serialized);
+    let deserialized = serde_json::from_str::<ServerMessageEnum>(&serialized).unwrap();
+
+    assert_eq!(
+        deserialized,
+        ServerMessageEnum::Subscription(ServerSubscriptionDetails::Accounts(
+            SubscribeAccountsDetails {}
+        ))
+    );
 }

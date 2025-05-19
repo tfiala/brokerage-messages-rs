@@ -68,7 +68,7 @@ pub struct SubscribeAccountsDetails {}
 
 pub fn make_subscribe_accounts_message<'a>()
 -> ServerMessage<'a, ServerSubscription<'a, SubscribeAccountsDetails>> {
-    ServerMessage::new_request(ServerSubscription::new(
+    ServerMessage::new_subscription(ServerSubscription::new(
         "accounts",
         SubscribeAccountsDetails {},
     ))
@@ -142,6 +142,13 @@ pub enum ServerRequestDetails {
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
+#[serde(tag = "id", content = "details")]
+pub enum ServerSubscriptionDetails {
+    #[serde(rename = "accounts")]
+    Accounts(SubscribeAccountsDetails),
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(tag = "proto", content = "data")]
 pub enum ServerMessageEnum {
     #[serde(rename = "push")]
@@ -149,5 +156,5 @@ pub enum ServerMessageEnum {
     #[serde(rename = "request")]
     Request(ServerRequestDetails),
     #[serde(rename = "subscription")]
-    Subscription,
+    Subscription(ServerSubscriptionDetails),
 }
