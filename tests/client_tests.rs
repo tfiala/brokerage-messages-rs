@@ -11,7 +11,7 @@ use rstest::rstest;
 //
 
 #[rstest]
-fn test_specific_select_account_response_parsing(
+fn test_explicit_select_account_response_parsing(
     select_account_response: ClientMessage<ClientResponse<SelectAccountResponseDetails>>,
 ) {
     let serialized = serde_json::to_string(&select_account_response).unwrap();
@@ -59,7 +59,7 @@ fn test_enum_select_account_response_parsing(
 //
 
 #[rstest]
-fn test_specific_accounts_sub_update_parsing(accounts: Vec<BrokerageAccount>) {
+fn test_explicit_accounts_sub_update_parsing(accounts: Vec<BrokerageAccount>) {
     let message = make_accounts_subscription_update(accounts);
     let serialized = serde_json::to_string(&message).unwrap();
     let deserialized = serde_json::from_str::<

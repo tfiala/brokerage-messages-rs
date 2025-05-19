@@ -95,9 +95,6 @@ pub fn make_subscribe_account_ledger_message<'a>(
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
-pub struct SubscribeAccountsPayload {}
-
-#[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct SubscribePositionsPayload {
     #[serde(rename = "account-id")]
     pub account_id: String,
@@ -116,7 +113,7 @@ pub enum Subscription {
     AccountLedger(SubscribeAccountLedgerDetails),
 
     #[serde(rename = "accounts")]
-    Accounts(SubscribeAccountsPayload),
+    Accounts(SubscribeAccountsDetails),
 
     #[serde(rename = "positions")]
     Positions(SubscribePositionsPayload),
@@ -150,14 +147,14 @@ pub fn make_select_account_request<'a>(
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(tag = "id", content = "details")]
-pub enum ServerRequestDetails {
+pub enum EnumRequestDetails {
     #[serde(rename = "select-account")]
     SelectAccount(SelectAccountDetails),
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(tag = "id", content = "details")]
-pub enum ServerSubscriptionDetails {
+pub enum EnumSubDetails {
     #[serde(rename = "accounts")]
     Accounts(SubscribeAccountsDetails),
     #[serde(rename = "account-ledger")]
@@ -166,11 +163,11 @@ pub enum ServerSubscriptionDetails {
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(tag = "proto", content = "data")]
-pub enum ServerMessageEnum {
+pub enum EnumMessage {
     #[serde(rename = "push")]
     Push,
     #[serde(rename = "request")]
-    Request(ServerRequestDetails),
+    Request(EnumRequestDetails),
     #[serde(rename = "subscription")]
-    Subscription(ServerSubscriptionDetails),
+    Subscription(EnumSubDetails),
 }

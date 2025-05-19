@@ -9,10 +9,6 @@ pub struct ClientMessage<'a, T> {
 }
 
 impl<'a, T> ClientMessage<'a, T> {
-    pub fn new(proto: &'a str, data: T) -> Self {
-        Self { proto, data }
-    }
-
     pub fn new_response(data: T) -> Self {
         Self {
             proto: "response",
