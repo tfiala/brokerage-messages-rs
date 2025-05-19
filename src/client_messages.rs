@@ -48,7 +48,6 @@ impl<'a, T> ClientResponse<'a, T> {
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct ClientSubscriptionUpdate<'a, T> {
-    #[serde(rename = "request-id")]
     id: &'a str,
     details: T,
 }
@@ -60,7 +59,7 @@ impl<'a, T> ClientSubscriptionUpdate<'a, T> {
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
-pub struct SelectAccountResponsePayload {
+pub struct SelectAccountResponseDetails {
     status: bool,
     #[serde(rename = "account-id")]
     account_id: String,
@@ -73,11 +72,11 @@ pub fn make_select_account_response<'a>(
     account_id: String,
     brokerage_id: String,
     status: bool,
-) -> ClientMessage<'a, ClientResponse<'a, SelectAccountResponsePayload>> {
+) -> ClientMessage<'a, ClientResponse<'a, SelectAccountResponseDetails>> {
     ClientMessage::new_response(ClientResponse::new(
         request_id,
         "select-account",
-        SelectAccountResponsePayload {
+        SelectAccountResponseDetails {
             account_id,
             brokerage_id,
             status,
@@ -86,15 +85,38 @@ pub fn make_select_account_response<'a>(
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
-pub struct AccountsSubscriptionUpdatePayload {
-    accounts: Vec<BrokerageAccount>,
+pub struct AccountsSubscriptionUpdateDetails {
+    pub accounts: Vec<BrokerageAccount>,
 }
 
 pub fn make_accounts_subscription_update<'a>(
     accounts: Vec<BrokerageAccount>,
-) -> ClientMessage<'a, ClientSubscriptionUpdate<'a, AccountsSubscriptionUpdatePayload>> {
+) -> ClientMessage<'a, ClientSubscriptionUpdate<'a, AccountsSubscriptionUpdateDetails>> {
     ClientMessage::new_subscription_update(ClientSubscriptionUpdate::new(
         "accounts",
-        AccountsSubscriptionUpdatePayload { accounts },
+        AccountsSubscriptionUpdateDetails { accounts },
     ))
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+#[serde(tag = "id", content = "details")]
+pub enum ClientResponseDetails {
+    #[serde(rename = "select-account")]
+    SelectAccount(SelectAccountResponseDetails),
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+#[serde(tag = "id", content = "details")]
+pub enum ClientSubscriptionDetails {
+    #[serde(rename = "accounts")]
+    Accounts(AccountsSubscriptionUpdateDetails),
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+#[serde(tag = "proto", content = "data")]
+pub enum ClientMessageEnum {
+    #[serde(rename = "response")]
+    Response(ClientResponseDetails),
+    #[serde(rename = "subscription")]
+    Subscription(ClientSubscriptionDetails),
 }
