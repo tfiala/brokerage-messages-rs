@@ -1,13 +1,16 @@
 [package]
 name = "brokerage-messages"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2024"
 license = "MIT"
 description = "Messages for communicating between a brokerage server and client"
 repository = "https://github.com/tfiala/brokerage-messages-rs"
 
 [dependencies]
+serde = { version = "1.0.219", features = ["alloc", "derive"] }
 
 [dev-dependencies]
+rstest = "0.25.0"
+serde_json = { version = "1.0.140", features = ["alloc"] }
 version-sync = "0.9.5"
 

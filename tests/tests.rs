@@ -1,0 +1,18 @@
+mod fixtures;
+
+use brokerage_messages::client_messages::*;
+use brokerage_messages::domain::*;
+use fixtures::accounts;
+use rstest::rstest;
+
+#[rstest]
+fn test_accounts_sub_update_parsing(accounts: Vec<BrokerageAccount>) {
+    let message = make_accounts_subscription_update(accounts);
+    let serialized = serde_json::to_string(&message).unwrap();
+    let deserialized = serde_json::from_str::<
+        ClientMessage<ClientSubscriptionUpdate<AccountsSubscriptionUpdatePayload>>,
+    >(&serialized)
+    .unwrap();
+
+    assert_eq!(message, deserialized);
+}
