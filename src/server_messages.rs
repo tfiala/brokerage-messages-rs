@@ -122,6 +122,10 @@ pub enum Subscription {
     Trades(SubscribeTradesPayload),
 }
 
+//
+// Select Account Request
+//
+
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct SelectAccountDetails {
     #[serde(rename = "account-id")]
@@ -145,11 +149,41 @@ pub fn make_select_account_request<'a>(
     ))
 }
 
+//
+// End of Day Summary Request
+//
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub struct EndOfDaySummaryDetails {
+    #[serde(rename = "account-id")]
+    pub account_id: String,
+    #[serde(rename = "brokerage-id")]
+    pub brokerage_id: String,
+}
+
+pub fn make_end_of_day_summary_request<'a>(
+    request_id: String,
+    account_id: String,
+    brokerage_id: String,
+) -> ServerMessage<'a, ServerRequest<'a, EndOfDaySummaryDetails>> {
+    ServerMessage::new_request(ServerRequest::new(
+        request_id,
+        "eod-summary",
+        EndOfDaySummaryDetails {
+            account_id,
+            brokerage_id,
+        },
+    ))
+}
+
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(tag = "id", content = "details")]
 pub enum EnumRequestDetails {
     #[serde(rename = "select-account")]
     SelectAccount(SelectAccountDetails),
+
+    #[serde(rename = "eod-summary")]
+    EndOfDaySummary(EndOfDaySummaryDetails),
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]

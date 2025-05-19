@@ -107,3 +107,37 @@ fn test_enum_select_account_request_parsing(
         }))
     );
 }
+
+//
+// End of Day Summary Request
+//
+
+#[rstest]
+fn test_explicit_end_of_day_summary_request_parsing(
+    eod_summary_request: ServerMessage<ServerRequest<EndOfDaySummaryDetails>>,
+) {
+    let serialized = serde_json::to_string(&eod_summary_request).unwrap();
+    let deserialized =
+        serde_json::from_str::<ServerMessage<ServerRequest<EndOfDaySummaryDetails>>>(&serialized)
+            .unwrap();
+
+    assert_eq!(deserialized, eod_summary_request);
+}
+
+#[rstest]
+fn test_enum_end_of_day_summary_request_parsing(
+    eod_summary_request: ServerMessage<ServerRequest<EndOfDaySummaryDetails>>,
+) {
+    let serialized = serde_json::to_string(&eod_summary_request).unwrap();
+    let deserialized = serde_json::from_str::<EnumMessage>(&serialized).unwrap();
+
+    assert_eq!(
+        deserialized,
+        EnumMessage::Request(EnumRequestDetails::EndOfDaySummary(
+            EndOfDaySummaryDetails {
+                account_id: eod_summary_request.data.details.account_id,
+                brokerage_id: eod_summary_request.data.details.brokerage_id
+            }
+        ))
+    );
+}
