@@ -85,6 +85,27 @@ pub fn make_select_account_response<'a>(
 }
 
 //
+// End of Day Summary Response
+//
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub struct EndOfDaySummaryResponseDetails {
+    #[serde(rename = "eod-summary")]
+    pub eod_summary: EndOfDaySummary,
+}
+
+pub fn make_end_of_day_summary_response<'a>(
+    request_id: String,
+    eod_summary: EndOfDaySummary,
+) -> ClientMessage<'a, ClientResponse<'a, EndOfDaySummaryResponseDetails>> {
+    ClientMessage::new_response(ClientResponse::new(
+        request_id,
+        "eod-summary",
+        EndOfDaySummaryResponseDetails { eod_summary },
+    ))
+}
+
+//
 // Accounts Subscription Update
 //
 
@@ -129,6 +150,9 @@ pub fn make_account_ledger_update<'a>(
 pub enum EnumResponseDetails {
     #[serde(rename = "select-account")]
     SelectAccount(SelectAccountResponseDetails),
+
+    #[serde(rename = "eod-summary")]
+    EndOfDaySummary(EndOfDaySummaryResponseDetails),
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]

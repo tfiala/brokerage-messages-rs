@@ -3,6 +3,10 @@ use brokerage_messages::client_messages::*;
 use brokerage_messages::domain::*;
 use rstest::fixture;
 
+//
+// Responses
+//
+
 #[fixture]
 pub fn select_account_response<'a>()
 -> ClientMessage<'a, ClientResponse<'a, SelectAccountResponseDetails>> {
@@ -13,6 +17,32 @@ pub fn select_account_response<'a>()
         true,
     )
 }
+
+#[fixture]
+pub fn eod_summary_response<'a>()
+-> ClientMessage<'a, ClientResponse<'a, EndOfDaySummaryResponseDetails>> {
+    make_end_of_day_summary_response::<'a>(
+        REQUEST_ID.to_owned(),
+        EndOfDaySummary {
+            account_id: ACCOUNT_ID.to_owned(),
+            brokerage_id: BROKERAGE_ID.to_owned(),
+            net_cash_balance: NET_CASH_BALANCE,
+            net_stock_balance: NET_STOCK_BALANCE,
+            interest: INTEREST,
+            interest_mtd: INTEREST_MTD,
+            dividends: DIVIDENDS,
+            dividends_mtd: DIVIDENDS_MTD,
+            commissions: COMMISSIONS,
+            commissions_mtd: COMMISSIONS_MTD,
+            other_fees: OTHER_FEES,
+            other_fees_mtd: OTHER_FEES_MTD,
+        },
+    )
+}
+
+//
+// Subscription Updates
+//
 
 #[fixture]
 pub fn account_ledger_update<'a>()

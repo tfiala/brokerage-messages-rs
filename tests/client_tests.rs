@@ -55,6 +55,39 @@ fn test_enum_select_account_response_parsing(
 }
 
 //
+// End of Day Summary Response
+//
+
+#[rstest]
+fn test_explicit_end_of_day_summary_response_parsing(
+    eod_summary_response: ClientMessage<ClientResponse<EndOfDaySummaryResponseDetails>>,
+) {
+    let serialized = serde_json::to_string(&eod_summary_response).unwrap();
+    let deserialized = serde_json::from_str::<
+        ClientMessage<ClientResponse<EndOfDaySummaryResponseDetails>>,
+    >(&serialized)
+    .unwrap();
+
+    assert_eq!(deserialized, eod_summary_response);
+}
+
+#[rstest]
+fn test_enum_end_of_day_summary_response_parsing(
+    eod_summary_response: ClientMessage<ClientResponse<EndOfDaySummaryResponseDetails>>,
+) {
+    let serialized = serde_json::to_string(&eod_summary_response).unwrap();
+    let deserialized = serde_json::from_str::<EnumMessage>(&serialized).unwrap();
+
+    assert_eq!(
+        deserialized,
+        EnumMessage::Response(EnumResponse {
+            request_id: REQUEST_ID.to_owned(),
+            details_enum: EnumResponseDetails::EndOfDaySummary(eod_summary_response.data.details)
+        })
+    );
+}
+
+//
 // Accounts Subscription Update
 //
 
