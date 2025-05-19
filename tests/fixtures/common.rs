@@ -7,6 +7,8 @@ pub const BROKERAGE_ID: &str = "FIDELITY";
 pub const ACCOUNT_ID_2: &str = "DU7654321";
 pub const BROKERAGE_ID_2: &str = "IBKR";
 
+pub const REQUEST_ID: &str = "request-123";
+
 #[fixture]
 pub fn accounts() -> Vec<BrokerageAccount> {
     vec![

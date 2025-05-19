@@ -4,8 +4,8 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 
 pub struct ClientMessage<'a, T> {
-    proto: &'a str,
-    data: T,
+    pub proto: &'a str,
+    pub data: T,
 }
 
 impl<'a, T> ClientMessage<'a, T> {
@@ -31,9 +31,9 @@ impl<'a, T> ClientMessage<'a, T> {
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct ClientResponse<'a, T> {
     #[serde(rename = "request-id")]
-    request_id: String,
-    id: &'a str,
-    details: T,
+    pub request_id: String,
+    pub id: &'a str,
+    pub details: T,
 }
 
 impl<'a, T> ClientResponse<'a, T> {
@@ -48,8 +48,8 @@ impl<'a, T> ClientResponse<'a, T> {
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct ClientSubscriptionUpdate<'a, T> {
-    id: &'a str,
-    details: T,
+    pub id: &'a str,
+    pub details: T,
 }
 
 impl<'a, T> ClientSubscriptionUpdate<'a, T> {
@@ -64,11 +64,11 @@ impl<'a, T> ClientSubscriptionUpdate<'a, T> {
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 pub struct SelectAccountResponseDetails {
-    status: bool,
     #[serde(rename = "account-id")]
-    account_id: String,
+    pub account_id: String,
     #[serde(rename = "brokerage-id")]
-    brokerage_id: String,
+    pub brokerage_id: String,
+    pub status: bool,
 }
 
 pub fn make_select_account_response<'a>(
@@ -93,16 +93,16 @@ pub fn make_select_account_response<'a>(
 //
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
-pub struct AccountsSubscriptionUpdateDetails {
+pub struct AccountsSubUpdateDetails {
     pub accounts: Vec<BrokerageAccount>,
 }
 
 pub fn make_accounts_subscription_update<'a>(
     accounts: Vec<BrokerageAccount>,
-) -> ClientMessage<'a, ClientSubscriptionUpdate<'a, AccountsSubscriptionUpdateDetails>> {
+) -> ClientMessage<'a, ClientSubscriptionUpdate<'a, AccountsSubUpdateDetails>> {
     ClientMessage::new_subscription_update(ClientSubscriptionUpdate::new(
         "accounts",
-        AccountsSubscriptionUpdateDetails { accounts },
+        AccountsSubUpdateDetails { accounts },
     ))
 }
 
@@ -112,23 +112,32 @@ pub fn make_accounts_subscription_update<'a>(
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(tag = "id", content = "details")]
-pub enum ClientResponseDetails {
+pub enum EnumResponseDetails {
     #[serde(rename = "select-account")]
     SelectAccount(SelectAccountResponseDetails),
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
+pub struct EnumResponse {
+    #[serde(rename = "request-id")]
+    pub request_id: String,
+
+    #[serde(flatten)]
+    pub details_enum: EnumResponseDetails,
+}
+
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(tag = "id", content = "details")]
-pub enum ClientSubscriptionDetails {
+pub enum EnumSubDetails {
     #[serde(rename = "accounts")]
-    Accounts(AccountsSubscriptionUpdateDetails),
+    Accounts(AccountsSubUpdateDetails),
 }
 
 #[derive(Debug, Deserialize, Serialize, PartialEq)]
 #[serde(tag = "proto", content = "data")]
-pub enum ClientMessageEnum {
+pub enum EnumMessage {
     #[serde(rename = "response")]
-    Response(ClientResponseDetails),
+    Response(EnumResponse),
     #[serde(rename = "subscription")]
-    Subscription(ClientSubscriptionDetails),
+    Subscription(EnumSubDetails),
 }

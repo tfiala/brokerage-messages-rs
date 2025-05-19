@@ -2,13 +2,57 @@ mod fixtures;
 
 use brokerage_messages::client_messages::*;
 use brokerage_messages::domain::*;
-// use fixtures::client_fixtures::*;
+use fixtures::client_fixtures::*;
 use fixtures::common::*;
 use rstest::rstest;
 
 //
+// Select Account Response
 //
-//
+
+#[rstest]
+fn test_specific_select_account_response_parsing(
+    select_account_response: ClientMessage<ClientResponse<SelectAccountResponseDetails>>,
+) {
+    let serialized = serde_json::to_string(&select_account_response).unwrap();
+    let deserialized = serde_json::from_str::<
+        ClientMessage<ClientResponse<SelectAccountResponseDetails>>,
+    >(&serialized)
+    .unwrap();
+
+    assert_eq!(
+        deserialized,
+        ClientMessage::new_response(ClientResponse::new(
+            REQUEST_ID.to_owned(),
+            "select-account",
+            SelectAccountResponseDetails {
+                account_id: select_account_response.data.details.account_id,
+                brokerage_id: select_account_response.data.details.brokerage_id,
+                status: select_account_response.data.details.status
+            }
+        ))
+    );
+}
+
+#[rstest]
+fn test_enum_select_account_response_parsing(
+    select_account_response: ClientMessage<ClientResponse<SelectAccountResponseDetails>>,
+) {
+    let serialized = serde_json::to_string(&select_account_response).unwrap();
+    let deserialized = serde_json::from_str::<EnumMessage>(&serialized).unwrap();
+
+    assert_eq!(
+        deserialized,
+        EnumMessage::Response(EnumResponse {
+            request_id: REQUEST_ID.to_owned(),
+            details_enum: EnumResponseDetails::SelectAccount(SelectAccountResponseDetails {
+                account_id: select_account_response.data.details.account_id,
+                brokerage_id: select_account_response.data.details.brokerage_id,
+                status: select_account_response.data.details.status
+            })
+        })
+    );
+}
 
 //
 // Account Subscription Updates
@@ -19,7 +63,7 @@ fn test_specific_accounts_sub_update_parsing(accounts: Vec<BrokerageAccount>) {
     let message = make_accounts_subscription_update(accounts);
     let serialized = serde_json::to_string(&message).unwrap();
     let deserialized = serde_json::from_str::<
-        ClientMessage<ClientSubscriptionUpdate<AccountsSubscriptionUpdateDetails>>,
+        ClientMessage<ClientSubscriptionUpdate<AccountsSubUpdateDetails>>,
     >(&serialized)
     .unwrap();
 
@@ -33,12 +77,12 @@ fn test_enum_accounts_sub_update_parsing(accounts: Vec<BrokerageAccount>) {
     let serialized = serde_json::to_string(&message).unwrap();
     println!("serialized: {}", serialized);
 
-    let deserialized = serde_json::from_str::<ClientMessageEnum>(&serialized).unwrap();
+    let deserialized = serde_json::from_str::<EnumMessage>(&serialized).unwrap();
 
     assert_eq!(
         deserialized,
-        ClientMessageEnum::Subscription(ClientSubscriptionDetails::Accounts(
-            AccountsSubscriptionUpdateDetails { accounts }
-        ))
+        EnumMessage::Subscription(EnumSubDetails::Accounts(AccountsSubUpdateDetails {
+            accounts
+        }))
     );
 }
