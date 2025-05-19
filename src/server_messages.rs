@@ -119,6 +119,17 @@ pub enum ServerRequestDetails {
     SelectAccount(SelectAccountDetails),
 }
 
+#[derive(Debug, Deserialize, Serialize, PartialEq)]
+#[serde(tag = "proto", content = "data")]
+pub enum ServerMessageEnum {
+    #[serde(rename = "push")]
+    Push,
+    #[serde(rename = "request")]
+    Request(ServerRequestDetails),
+    #[serde(rename = "subscription")]
+    Subscription,
+}
+
 // #[derive(Debug, Deserialize, Serialize)]
 // #[serde(tag = "id", content = "details")]
 // pub enum ClientRequest {

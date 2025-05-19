@@ -46,3 +46,20 @@ fn test_request_enum_select_account_request_parsing(
         })
     );
 }
+
+#[rstest]
+fn test_message_enum_select_account_request_parsing(
+    select_account_request: ServerMessage<ServerRequest<SelectAccountDetails>>,
+) {
+    let serialized = serde_json::to_string(&select_account_request).unwrap();
+    println!("Serialized: {}", serialized);
+    let deserialized = serde_json::from_str::<ServerMessageEnum>(&serialized).unwrap();
+
+    assert_eq!(
+        deserialized,
+        ServerMessageEnum::Request(ServerRequestDetails::SelectAccount(SelectAccountDetails {
+            account_id: select_account_request.data.details.account_id,
+            brokerage_id: select_account_request.data.details.brokerage_id
+        }))
+    );
+}
