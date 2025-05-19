@@ -2,7 +2,8 @@ mod fixtures;
 
 use brokerage_messages::client_messages::*;
 use brokerage_messages::domain::*;
-use fixtures::accounts;
+use brokerage_messages::server_messages::*;
+use fixtures::*;
 use rstest::rstest;
 
 #[rstest]
@@ -15,4 +16,16 @@ fn test_accounts_sub_update_parsing(accounts: Vec<BrokerageAccount>) {
     .unwrap();
 
     assert_eq!(message, deserialized);
+}
+
+#[rstest]
+fn test_explicit_select_account_request_parsing(
+    select_account_request: ServerMessage<ServerRequest<SelectAccountDetails>>,
+) {
+    let serialized = serde_json::to_string(&select_account_request).unwrap();
+    let deserialized =
+        serde_json::from_str::<ServerMessage<ServerRequest<SelectAccountDetails>>>(&serialized)
+            .unwrap();
+
+    assert_eq!(select_account_request, deserialized);
 }
